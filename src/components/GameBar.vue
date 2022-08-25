@@ -6,9 +6,9 @@
         <va-card color="#000000">
             <va-card-content class="row justify--center">
                 <va-button v-for="(color, i) in usedColorMap" 
-                :color="color" :key="i" :disabled="!buttonEnableState[i-1]"
+                :color="color" :key="i" :disabled="!buttonEnableState[i]"
                     @click="onColorButtonClicked(color)">
-                    <font-awesome-icon v-show="!buttonEnableState[i-1]" icon="fa-solid fa-ban" />
+                    <font-awesome-icon v-show="!buttonEnableState[i]" icon="fa-solid fa-ban" />
                 </va-button>
             </va-card-content>
         </va-card>
