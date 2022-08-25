@@ -22,3 +22,9 @@ git commit -m 'deploy'
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
 git push -f https://github.com/vungocbinh2009/color-flood.git main:gh-pages
+
+# update source code
+cd ../
+git add -A 
+git commit -m 'update source code'
+git push -f https://github.com/vungocbinh2009/color-flood.git master:main
