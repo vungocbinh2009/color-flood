@@ -7,11 +7,11 @@
 
     <div class="game-setting">
         <h2 class="display-2">Board size</h2>
-        <va-button-toggle toggle-color="black" class="row justify--center" v-model="gameStore.boardSize"
+        <va-button-toggle toggle-color="black" class="row justify--center" v-model="modeStore.boardSize"
             :options="boardSizeSelection" />
 
         <h2 class="display-2">Number of colors</h2>
-        <va-button-toggle toggle-color="black" class="row justify--center" v-model="gameStore.numberOfColors"
+        <va-button-toggle toggle-color="black" class="row justify--center" v-model="modeStore.numberOfColor"
             :options="numberOfColorSelection" />
 
         <div>
@@ -24,7 +24,9 @@
 import { VaButtonToggle, VaButton } from 'vuestic-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useGameStore } from '../plugin/pinia';
+import { useModeStore } from 'src/plugin/pinia';
+
+let modeStore = useModeStore()
 
 let gameModeSelection = [
     { label: "One player", value: 1 },
@@ -49,24 +51,12 @@ let numberOfColorSelection = [
 
 let router = useRouter()
 
-let gameStore = useGameStore()
-
 let startGame = () => {
     let routeMap: Record<number, string> = {
         1: "/mode/oneplayer",
         2: "/mode/twoplayer",
         3: "/mode/twoplayer"
     }
-    // reset một số chỉ số.
-    gameStore.$patch({
-        playerRedScore: 1,
-        playerBlueScore: 1,
-        boardCurrentState: [[1, 2], [3, 4]],
-    })
-    if (gameMode.value == 2) {
-        gameStore.playWithComputer = true
-    }
-    gameStore.initBoard()
     router.push(routeMap[gameMode.value])
 }
 </script>
