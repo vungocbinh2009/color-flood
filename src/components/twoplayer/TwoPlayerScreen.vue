@@ -76,8 +76,8 @@ let pickColor = (color: string) => {
         if (playWithComputer) {
             let compNumber = botPickNumber(boardCurrentState.value, numberOfColors)
             updateBoardAndScore(compNumber)
+            pickColorPhase.value = PickColorPhase.RED_PLAYER_PICK
         }
-        pickColorPhase.value = PickColorPhase.RED_PLAYER_PICK
     } else {
         updateBoardAndScore(newNumber)
         pickColorPhase.value = PickColorPhase.RED_PLAYER_PICK
