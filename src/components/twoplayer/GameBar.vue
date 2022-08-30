@@ -22,18 +22,16 @@
 import { VaCard, VaCardContent, VaButton, VaNavbar, VaNavbarItem } from 'vuestic-ui';
 import { computed } from 'vue';
 import { colorMap } from "src/plugin/constant"
-import { botPickNumber, botBanNumber } from "src/core/bot"
 import { GameResult, PickColorPhase } from 'src/core/util';
-import { emit } from 'process';
 
 let props = defineProps<{
-    numberOfColors: number,
-    boardSize: number,
-    playWithComputer: boolean,
-    playerRedScore: number,
-    playerBlueScore: number,
-    boardCurrentState: number[][],
-    pickColorPhase: PickColorPhase
+    numberOfColors: number
+    playerRedScore: number
+    playerBlueScore: number
+    isRedTurn: boolean
+    isGameFinished: boolean
+    currentRedNumber: number
+    currentBlueNumber: number
 }>()
 
 let emits = defineEmits<{
@@ -46,17 +44,9 @@ let usedColorMap = computed(() => {
 
 let spaceChar = " "
 
-let isRedTurn = computed((): boolean => {
-    return props.pickColorPhase == PickColorPhase.RED_PLAYER_PICK
-})
-
-let isGameFinished = computed((): boolean => {
-    return props.playerRedScore + props.playerBlueScore == props.boardSize * props.boardSize
-})
-
 let winningTeam = computed((): GameResult => {
     let value: GameResult = GameResult.DRAW
-    if (isGameFinished) {
+    if (props.isGameFinished) {
         if (props.playerRedScore > props.playerBlueScore) {
             value = GameResult.RED_PLAYER_WIN
         } else if (props.playerRedScore < props.playerBlueScore) {
@@ -68,16 +58,8 @@ let winningTeam = computed((): GameResult => {
     return value
 })
 
-let getRedCurrentNumber = computed((): number => {
-    return props.boardCurrentState[0][0]
-})
-
-let getBlueCurrentNumber = computed((): number => {
-    return props.boardCurrentState[props.boardSize - 1][props.boardSize - 1]
-})
-
 let playerTurnMessage = computed(() => {
-    if (isGameFinished) {
+    if (props.isGameFinished) {
         if (winningTeam.value === GameResult.RED_PLAYER_WIN) {
             return "Red player won"
         } else if (winningTeam.value === GameResult.BLUE_PLAYER_WIN) {
@@ -87,10 +69,10 @@ let playerTurnMessage = computed(() => {
         }
     }
 
-    if (props.pickColorPhase == PickColorPhase.RED_PLAYER_PICK) {
-        return "Red player pick"
+    if (props.isRedTurn) {
+        return "Red turn"
     } else {
-        return "Blue player pick"
+        return "Blue turn"
     }
 })
 
@@ -98,9 +80,9 @@ let playerTurnMessage = computed(() => {
 let buttonEnableState = computed(() => {
     let state = Array<boolean>(props.numberOfColors)
     for (let i = 0; i < props.numberOfColors; i++) {
-        if (isGameFinished) {
+        if (props.isGameFinished) {
             state[i] = false
-        } else if (i == getBlueCurrentNumber.value || i == getRedCurrentNumber.value) {
+        } else if (i === props.currentBlueNumber || i === props.currentRedNumber) {
             state[i] = false
         } else {
             state[i] = true

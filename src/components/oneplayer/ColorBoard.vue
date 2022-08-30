@@ -1,8 +1,6 @@
 <template>
     <div class="parent">
-        <va-button v-for="i in numberOfCells" size="small" :rounded="false" :color="cellColors[i - 1]">
-            {{spaceChar}}
-        </va-button>
+        <va-button v-for="i in numberOfCells" size="small" :rounded="false" :color="cellColors[i - 1]" />
     </div>
 </template>
 
@@ -40,5 +38,5 @@ let cellColors = computed(() => {
     grid-column-gap: 0px;
     grid-row-gap: 0px;
     aspect-ratio: 1/1;
-} 
+}
 </style>

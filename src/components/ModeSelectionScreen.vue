@@ -7,11 +7,11 @@
 
     <div class="game-setting">
         <h2 class="display-2">Board size</h2>
-        <va-button-toggle toggle-color="black" class="row justify--center" v-model="modeStore.boardSize"
+        <va-button-toggle toggle-color="black" class="row justify--center" v-model="gameSettingStore.boardSize"
             :options="boardSizeSelection" />
 
         <h2 class="display-2">Number of colors</h2>
-        <va-button-toggle toggle-color="black" class="row justify--center" v-model="modeStore.numberOfColor"
+        <va-button-toggle toggle-color="black" class="row justify--center" v-model="gameSettingStore.numberOfColor"
             :options="numberOfColorSelection" />
 
         <div>
@@ -24,17 +24,23 @@
 import { VaButtonToggle, VaButton } from 'vuestic-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useModeStore } from 'src/plugin/pinia';
+import { useGameSettingStore } from 'src/plugin/pinia';
 
-let modeStore = useModeStore()
+let gameSettingStore = useGameSettingStore()
+
+enum GameMode {
+    ONE_PLAYER = 1,
+    PLAY_WITH_COMPUTER = 2,
+    TWO_PLAYER = 3
+}
 
 let gameModeSelection = [
-    { label: "One player", value: 1 },
-    { label: "Play with computer", value: 2 },
-    { label: "Two players", value: 3 }
+    { label: "One player", value: GameMode.ONE_PLAYER },
+    { label: "Play with computer", value: GameMode.PLAY_WITH_COMPUTER },
+    { label: "Two players", value: GameMode.TWO_PLAYER }
 ]
 
-let gameMode = ref(1)
+let gameMode = ref(GameMode.ONE_PLAYER)
 
 let boardSizeSelection = [
     { label: "15x15", value: 15 },
@@ -52,12 +58,20 @@ let numberOfColorSelection = [
 let router = useRouter()
 
 let startGame = () => {
-    let routeMap: Record<number, string> = {
-        1: "/mode/oneplayer",
-        2: "/mode/twoplayer",
-        3: "/mode/twoplayer"
+    let setupGameRecord: Record<GameMode, () => void> = {
+        [GameMode.ONE_PLAYER]: () => {
+            router.push("/mode/oneplayer")
+        },
+        [GameMode.PLAY_WITH_COMPUTER]: () => {
+            gameSettingStore.playWithComputer = true
+            router.push("/mode/twoplayer")
+        },
+        [GameMode.TWO_PLAYER]: () => {
+            gameSettingStore.playWithComputer = false
+            router.push("/mode/twoplayer")
+        }
     }
-    router.push(routeMap[gameMode.value])
+    setupGameRecord[gameMode.value]()
 }
 </script>
 

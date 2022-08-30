@@ -29,12 +29,12 @@ import { colorMap } from "src/plugin/constant"
 import ColorBoard from "./ColorBoard.vue"
 import random from "random"
 import { calculateScore, floodFill } from 'src/core/floodFill';
-import { useModeStore } from 'src/plugin/pinia';
+import { useGameSettingStore } from 'src/plugin/pinia';
 
-let modeStore = useModeStore()
+let gameSettingStore = useGameSettingStore()
 
-let boardSize = modeStore.boardSize
-let numberOfColors = modeStore.numberOfColor
+let boardSize = gameSettingStore.boardSize
+let numberOfColors = gameSettingStore.numberOfColor
 let moves = ref(1)
 let playerScore = ref(1)
 let boardCurrentState = reactive({value: [[1, 2], [3, 4]]})
@@ -52,7 +52,7 @@ let usedColorMap = computed(() => {
 let buttonEnableState = computed(() => {
     let state = Array<boolean>(numberOfColors)
     for (let i = 0; i < numberOfColors; i++) {
-        if (playerScore.value === boardSize * boardSize || getRedCurrentNumber.value === i) {
+        if (playerScore.value === boardSize * boardSize || getCurrentNumber.value === i) {
             state[i] = false
         } else {
             state[i] = true
@@ -67,7 +67,7 @@ let updateBoard = (color: string) => {
     updateBoardAndScore(index)
 }
 
-let getRedCurrentNumber = computed((): number => {
+let getCurrentNumber = computed((): number => {
     return boardCurrentState.value[0][0]
 })
 
@@ -79,7 +79,7 @@ let initBoard = () => {
             boardState[i][j] = random.int(0, numberOfColors - 1)
         }
     }
-    boardCurrentState.value = reactive(boardState)
+    boardCurrentState.value = boardState
 }
 
 let updateBoardAndScore = (newNumber: number) => {
@@ -87,7 +87,7 @@ let updateBoardAndScore = (newNumber: number) => {
         boardCurrentState.value,
         boardSize, boardSize,
         0, 0,
-        getRedCurrentNumber.value, newNumber
+        getCurrentNumber.value, newNumber
     )
     playerScore.value = calculateScore(
         boardCurrentState.value,

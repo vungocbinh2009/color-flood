@@ -1,8 +1,6 @@
 <template>
     <div class="parent">
-        <va-button v-for="i in numberOfCells" size="small" :rounded="false" :color="cellColors[i - 1]">
-            {{ spaceChar }}
-        </va-button>
+        <va-button v-for="i in numberOfCells" size="small" :rounded="false" :color="cellColors[i - 1]"/>
     </div>
 </template>
 
@@ -19,8 +17,6 @@ let props = defineProps<{
     let numberOfCells = computed(() => {
         return props.boardSize * props.boardSize
     })
-
-let spaceChar = "  "
 
 let cellColors = computed(() => {
     return props.boardCurrentState.map((array: Array<number>) => {

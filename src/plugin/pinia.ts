@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 
-export let useModeStore = defineStore("modeStore", () => {
+export let useGameSettingStore = defineStore("gameSettingStore", () => {
     let boardSize = 15
     let numberOfColor = 6
-    return {boardSize, numberOfColor}
+    let playWithComputer = true
+    return {boardSize, numberOfColor, playWithComputer}
 })
