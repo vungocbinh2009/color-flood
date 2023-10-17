@@ -52,6 +52,8 @@ let playerMove = (newColor: number) => {
 
 .color-board {
     grid-area: color-board;
+    height: calc(100vh - 80px);
+    overflow: scroll;
 }
 
 .game-bar {

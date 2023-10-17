@@ -1,9 +1,9 @@
 <template>
     <div class="parent">
-        <va-card class="player-score" color="#ff0000">
+        <va-card square class="player-score" :color="colorMap[props.playerColor[0]]">
             <h1 class="text-score">{{props.playerScore[0]}}</h1>
         </va-card>
-        <va-card color="#000000">
+        <va-card square color="#000000">
             <va-card-content class="center-toggle">
                 <va-button v-for="(color, i) in usedColorMap" 
                 :color="color" :key="i" :disabled="!buttonEnableState[i]"
@@ -12,10 +12,10 @@
                 </va-button>
             </va-card-content>
         </va-card>
-        <va-card class="player-score" color="#0000ff" v-show="gameStore.numPlayer === 2">
+        <va-card square class="player-score" :color="colorMap[props.playerColor[1]]" v-show="gameStore.numPlayer === 2">
             <h1 class="text-score">{{props.playerScore[1]}}</h1>
         </va-card>
-    </div>
+    </div>    
 </template>
 
 <script setup lang="ts">
