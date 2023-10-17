@@ -7,23 +7,23 @@
 <script setup lang="ts">
 import { VaButton } from "vuestic-ui"
 import { computed } from 'vue';
-import { colorMap } from 'src/plugin/constant';
+import { CellState, colorMap } from 'src/core/colorBoardManager';
+import { useGameStore } from "src/plugin/pinia";
 
 let props = defineProps<{
-    boardSize: number,
-    boardCurrentState: number[][]
+    colorBoard: CellState[][]
 }>()
 
+let gameStore = useGameStore()
+
 let numberOfCells = computed(() => {
-    return props.boardSize * props.boardSize
+    return gameStore.boardSize ** 2
 })
 
-let spaceChar = "  "
-
 let cellColors = computed(() => {
-    return props.boardCurrentState.map((array: Array<number>) => {
-        return array.map((element: number) => {
-            return colorMap[element]
+    return props.colorBoard.map((array: Array<CellState>) => {
+        return array.map((element: CellState) => {
+            return colorMap[element.color]
         })
     }).flat()
 })
@@ -33,8 +33,8 @@ let cellColors = computed(() => {
 <style scoped>
 .parent {
     display: grid;
-    grid-template-columns: repeat(v-bind('props.boardSize'), 1fr);
-    grid-template-rows: repeat(v-bind('props.boardSize'), 1fr);
+    grid-template-columns: repeat(v-bind('gameStore.boardSize'), 1fr);
+    grid-template-rows: repeat(v-bind('gameStore.boardSize'), 1fr);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
     aspect-ratio: 1/1;

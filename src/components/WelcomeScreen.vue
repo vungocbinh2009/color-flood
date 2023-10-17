@@ -12,8 +12,8 @@ let choosePlayMode = () => {
 <template>
   <div class="container">
     <div class="game-name">
-      <h1 class="display-1">Color flood</h1>
-      <h5 class="display-5">A simple color game made by vungocbinh2009</h5>
+      <h1>Color flood</h1>
+      <h5>A simple color game made by vungocbinh2009</h5>
     </div>
     <va-button size="large" class="play-button" @click="choosePlayMode">Play</va-button>
   </div>

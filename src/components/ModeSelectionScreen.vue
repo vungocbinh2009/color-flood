@@ -1,18 +1,26 @@
 <template>
     <div class="game-mode">
-        <h2 class="display-2">All game mode:</h2>
-        <va-button-toggle toggle-color="black" class="row justify--center" v-model="gameMode"
+        <h2>All game mode:</h2>
+        <div class="center-toggle">
+            <va-button-toggle class="center-toggle" toggle-color="#000000" v-model="gameMode"
             :options="gameModeSelection" />
+        </div>
+        
     </div>
 
     <div class="game-setting">
-        <h2 class="display-2">Board size</h2>
-        <va-button-toggle toggle-color="black" class="row justify--center" v-model="gameSettingStore.boardSize"
+        <h2>Board size</h2>
+        <div class="center-toggle">
+            <va-button-toggle class="center-toggle" toggle-color="#000000" v-model="gameStore.boardSize"
             :options="boardSizeSelection" />
-
-        <h2 class="display-2">Number of colors</h2>
-        <va-button-toggle toggle-color="black" class="row justify--center" v-model="gameSettingStore.numberOfColor"
+        </div>
+        
+        
+        <h2>Number of colors</h2>
+        <div class="center-toggle">
+            <va-button-toggle class="center-toggle" toggle-color="#000000" v-model="gameStore.numColor"
             :options="numberOfColorSelection" />
+        </div>
 
         <div>
             <va-button class="play-button" @click="startGame()">Play game</va-button>
@@ -24,9 +32,9 @@
 import { VaButtonToggle, VaButton } from 'vuestic-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useGameSettingStore } from 'src/plugin/pinia';
+import { useGameStore } from 'src/plugin/pinia';
 
-let gameSettingStore = useGameSettingStore()
+let gameStore = useGameStore()
 
 enum GameMode {
     ONE_PLAYER = 1,
@@ -60,18 +68,20 @@ let router = useRouter()
 let startGame = () => {
     let setupGameRecord: Record<GameMode, () => void> = {
         [GameMode.ONE_PLAYER]: () => {
-            router.push("/mode/oneplayer")
+            gameStore.numPlayer = 1
+            gameStore.playWithComputer = false
         },
         [GameMode.PLAY_WITH_COMPUTER]: () => {
-            gameSettingStore.playWithComputer = true
-            router.push("/mode/twoplayer")
+            gameStore.numPlayer = 2
+            gameStore.playWithComputer = true
         },
         [GameMode.TWO_PLAYER]: () => {
-            gameSettingStore.playWithComputer = false
-            router.push("/mode/twoplayer")
+            gameStore.numPlayer = 2
+            gameStore.playWithComputer = false
         }
     }
     setupGameRecord[gameMode.value]()
+    router.push("/gamescreen")
 }
 </script>
 
@@ -100,6 +110,12 @@ let startGame = () => {
 .game-setting {
     grid-area: game-setting;
     text-align: center;
+}
+
+.center-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .play-button {

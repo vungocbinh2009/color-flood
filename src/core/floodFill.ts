@@ -1,5 +1,3 @@
-import { faTruckMedical } from "@fortawesome/free-solid-svg-icons";
-
 // Hàm này kiểm tra xem tọa độ x, y có vượt ra ngoài bảng gameBoard không?
 function isOutOfBounds(m: number, n: number, x: number, y: number) {
     if (x < 0 || x >= m || y < 0 || y >= n) {
@@ -76,7 +74,7 @@ export function floodFill(gameBoard: number[][], m: number, n: number,
 
 // Hàm này dùng dể tính điểm cho 1 trong 2 đội (dùng giá trị x, y)
 export function calculateScore(screen: number[][], m: number, n: number,
-     x: number, y: number, color: number): number {
+    x: number, y: number, color: number): number {
     let queue: number[][] = []
     let score = 0
     let visited: boolean[][] = []

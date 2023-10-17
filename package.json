@@ -16,9 +16,9 @@
     "@fortawesome/vue-fontawesome": "^3.0.1",
     "pinia": "^2.0.16",
     "random": "^3.0.6",
-    "vue": "^3.2.37",
+    "vue": "^3.3.4",
     "vue-router": "^4.1.2",
-    "vuestic-ui": "^1.4.9"
+    "vuestic-ui": "^1.8.1"
   },
   "devDependencies": {
     "@types/node": "^18.7.13",
