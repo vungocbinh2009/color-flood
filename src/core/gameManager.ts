@@ -1,22 +1,36 @@
-import { onMounted, ref, watch } from "vue";
-import { useColorBoardManager } from "./colorBoardManager";
+import { computed, onMounted, ref, watch } from "vue";
+import { ColorBoardManagerParams, useColorBoardManager } from "./colorBoardManager";
+import { getStartPosition } from "./startPosition";
 
-export let useGameManager = (boardSize: number, numColor: number, playerList: string[]) => {
-    
-    let colorBoard = useColorBoardManager(boardSize, numColor, playerList)
+export let useGameManager = (params: ColorBoardManagerParams) => {
+    let {boardSize, numColor, playerList, randomObstacle} = params
+    let colorBoard = useColorBoardManager(params)
     let currentPlayerNum: number = 0
     let playerScore = ref([0, 0])
-    let playerColor = ref([0, 0])
+
+    let playerColor = computed(() => {
+        let boardSize = colorBoard.boardSize
+        let startPos = getStartPosition(boardSize, "corner", playerList)
+        console.log(startPos)
+        return startPos.map((pos: number[]): number => {
+            return colorBoard.gameBoard.value[pos[0]][pos[1]].color
+        })
+    })
     let isGameFinished = ref(false)
 
     onMounted(() => {
         playerScore.value = new Array<number>(playerList.length)
-        playerColor.value = new Array<number>(playerList.length)
         for(let i=0; i < playerList.length; i++) {
             playerScore.value[i] = 0
         }
-        playerColor.value[0] = colorBoard.gameBoard.value[0][0].color
-        playerColor.value[1] = colorBoard.gameBoard.value[boardSize-1][boardSize-1].color
+        // Đánh dấu các ô xuất phát của người chơi.
+        let startPos = getStartPosition(boardSize, "corner", playerList)
+        startPos.forEach((pos: number[], index: number) => {
+            let startCell = colorBoard.gameBoard.value[pos[0]][pos[1]]
+            startCell.owner = playerList[index]
+            startCell.init = true
+            colorBoard.floodFill(playerList[index], startCell.color)
+        })
     })
 
     let nextPlayer = () => {
@@ -27,19 +41,10 @@ export let useGameManager = (boardSize: number, numColor: number, playerList: st
         }
     }
 
-    let updatePlayerCurrentColor = () => {
-        let boardSize = colorBoard.boardSize
-        playerColor.value = [
-            colorBoard.gameBoard.value[0][0].color,
-            colorBoard.gameBoard.value[boardSize - 1][boardSize - 1].color
-        ]
-    }
-
     let playerMove = (newColor: number) => {
         let player = playerList[currentPlayerNum]
         colorBoard.floodFill(player, newColor)
         playerScore.value[currentPlayerNum] = colorBoard.calculateScore(player)
-        updatePlayerCurrentColor()
         nextPlayer()
         console.log(`Current player: ${currentPlayerNum}`)
         isGameFinished.value = isGameFinishedFunc()
@@ -48,8 +53,10 @@ export let useGameManager = (boardSize: number, numColor: number, playerList: st
     let isGameFinishedFunc = () => {
         let result = true
         playerList.forEach((value) => {
+            console.log(`Check is game finished: ${value}`)
             // Nếu vẫn còn thì giá trị bị gán false
             result = colorBoard.isNoMoreMove(value)
+            console.log(`Is game finished: ${result}`)
         })
         return result
     }
@@ -57,17 +64,18 @@ export let useGameManager = (boardSize: number, numColor: number, playerList: st
     watch(isGameFinished, (newValue, oldValue) => {
         // NewValue = true => gameFinished
         if(newValue) {
-            if(colorBoard.isNoMoreMove("player1")) {
+            console.log(playerList)
+            if(colorBoard.isNoMoreMove(playerList[0])) {
                 colorBoard.forEachBoardCell((i, j, cell) => {
                     if(cell.owner === "none") {
-                        cell.owner = "player2"
+                        cell.owner = playerList[1]
                         cell.color = playerColor.value[1]
                     }
                 })
             } else {
                 colorBoard.forEachBoardCell((i, j, cell) => {
                     if(cell.owner === "none") {
-                        cell.owner = "player1"
+                        cell.owner = playerList[0]
                         cell.color = playerColor.value[0]
                     }
                 })
@@ -93,7 +101,6 @@ export let useGameManager = (boardSize: number, numColor: number, playerList: st
         isGameFinished,
         // Hàm
         nextPlayer,
-        updatePlayerCurrentColor,
         playerMove,
         getWinningPlayer
     }

@@ -1,6 +1,11 @@
 <template>
     <div class="parent">
-        <va-button v-for="i in numberOfCells" size="small" :rounded="false" :color="cellColors[i - 1]" />
+        <va-button 
+            v-for="i in numberOfCells" size="small" 
+            :rounded="false" :color="cellColors[i-1]"
+        >
+            <font-awesome-icon v-show="cellProp[i-1].init" icon="fa-solid fa-home" />
+        </va-button>
     </div>
 </template>
 
@@ -23,7 +28,20 @@ let numberOfCells = computed(() => {
 let cellColors = computed(() => {
     return props.colorBoard.map((array: Array<CellState>) => {
         return array.map((element: CellState) => {
-            return colorMap[element.color]
+            if(element.active) {
+                return colorMap[element.color]
+            } else {
+                return "#FFFFFF" // White
+            }
+            
+        })
+    }).flat()
+})
+
+let cellProp = computed(() => {
+    return props.colorBoard.map((array: Array<CellState>) => {
+        return array.map((element: CellState) => {
+            return element
         })
     }).flat()
 })

@@ -22,6 +22,11 @@
             :options="numberOfColorSelection" />
         </div>
 
+        <va-checkbox
+            v-model="gameStore.randomObstacle"
+            label="Random map obstacle"
+        />
+
         <div>
             <va-button class="play-button" @click="startGame()">Play game</va-button>
         </div>
@@ -29,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { VaButtonToggle, VaButton } from 'vuestic-ui';
+import { VaButtonToggle, VaButton, VaCheckbox } from 'vuestic-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useGameStore } from 'src/plugin/pinia';
@@ -54,7 +59,9 @@ let boardSizeSelection = [
     { label: "15x15", value: 15 },
     { label: "19x19", value: 19 },
     { label: "21x21", value: 21 },
-    { label: "25x25", value: 25 }
+    { label: "25x25", value: 25 },
+    { label: "35x35", value: 35 },
+    { label: "50x50", value: 50 }
 ]
 
 let numberOfColorSelection = [

@@ -3,7 +3,14 @@
         <ColorBoard class="color-board"
         :color-board="gameManager.colorBoard.gameBoard.value"
         />
-        <GameBar class="game-bar"
+        <GameBarTwoPlayer class="game-bar" v-if="gameStore.numPlayer === 2"
+        :player-color="gameManager.playerColor.value"
+        :player-score="gameManager.playerScore.value"
+        :is-game-finished="gameManager.isGameFinished.value"
+        @player-move="playerMove"
+        />
+
+        <GameBarOnePlayer class="game-bar" v-if="gameStore.numPlayer === 1"
         :player-color="gameManager.playerColor.value"
         :player-score="gameManager.playerScore.value"
         :is-game-finished="gameManager.isGameFinished.value"
@@ -16,18 +23,20 @@
 <script setup lang="ts">
 import { onMounted, watch } from "vue";
 import ColorBoard from "./ColorBoard.vue"
-import GameBar from './GameBar.vue';
+import GameBarOnePlayer from './GameBarOnePlayer.vue';
+import GameBarTwoPlayer from './GameBarTwoPlayer.vue';
 import { useGameStore } from "src/plugin/pinia";
 import { onBeforeMount } from "vue";
 import { useGameManager } from "src/core/gameManager";
 
 let gameStore = useGameStore()
 
-let gameManager = useGameManager(
-    gameStore.boardSize,
-    gameStore.numColor,
-    gameStore.playerList,
-)
+let gameManager = useGameManager({
+    boardSize: gameStore.boardSize,
+    numColor: gameStore.numColor,
+    playerList: gameStore.playerList,
+    randomObstacle: gameStore.randomObstacle
+})
 
 let playerMove = (newColor: number) => {
     gameManager.playerMove(newColor)

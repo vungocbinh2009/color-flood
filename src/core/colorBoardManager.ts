@@ -1,5 +1,5 @@
 import random from "random"
-import { Ref, onMounted, ref } from "vue"
+import { Ref, onBeforeMount, onMounted, ref } from "vue"
 
 // Các màu được dùng trong game.
 export let colorMap = [
@@ -17,17 +17,31 @@ export let colorMap = [
 export class CellState {
     // Ô này có active hay không, nếu không thì coi như chướng ngại vật
     active: boolean = true
+    // Màu sắc của ô, được đánh dấu bằng số.
     color: number = 0
+    // người chơi có thể nhìn thấy ô này hay không?
     visible: boolean = true
+    // ĐIểm số khi chiếm được ô này.
     score: number = 1
+    // Chủ sở hữu của ô này.
     owner: string = "none"
+    // Ô này có phải là ô xuất phát của player hay không?
+    init: boolean = false
 }
 
-export let useColorBoardManager = (boardSize: number, numColor: number, playerList: string[]) => {
+export interface ColorBoardManagerParams {
+    boardSize: number
+    numColor: number
+    playerList: string[]
+    randomObstacle: boolean
+}
+
+export let useColorBoardManager = (params: ColorBoardManagerParams) => {
     // follow thuộc tính này để cập nhật map.
+    let {boardSize, numColor, playerList, randomObstacle} = params
     let gameBoard: Ref<CellState[][]> = ref(new Array<CellState[]>(boardSize))
 
-    onMounted(() => {
+    onBeforeMount(() => {
         initBoard(boardSize, numColor, playerList)
     })
 
@@ -36,17 +50,17 @@ export let useColorBoardManager = (boardSize: number, numColor: number, playerLi
         boardSize = boardSize
         numColor = numColor
         playerList = playerList
-        // Random màu cho gameboard
+        // Random màu và trạng thái active cho gameboard
         for (let i=0; i<boardSize; i++) {
             gameBoard.value[i] = new Array<CellState>(boardSize)
             for (let j=0; j<boardSize; j++) {
                 gameBoard.value[i][j] = new CellState()
                 gameBoard.value[i][j].color = random.int(0, numColor - 1)
+                if(randomObstacle) {
+                    gameBoard.value[i][j].active = random.bernoulli(0.05)() < 0.05
+                }
             }
         }
-        // Đặt owner của hai màu ở góc bảng
-        gameBoard.value[0][0].owner = playerList[0]
-        gameBoard.value[boardSize-1][boardSize-1].owner = playerList[1]
     }
 
     let forEachBoardCell = (func: (i: number, j:number, cell: CellState) => void) => {
@@ -71,6 +85,10 @@ export let useColorBoardManager = (boardSize: number, numColor: number, playerLi
         if (j < boardSize-1) {
             adjList.push(gameBoard.value[i][j+1])
         }
+        // Lọc bỏ các ô là chướng ngại vật, chỉ lấy ô active.
+        adjList = adjList.filter((value) => {
+            return value.active === true
+        })
         return adjList
     }
 
@@ -90,7 +108,7 @@ export let useColorBoardManager = (boardSize: number, numColor: number, playerLi
             }
         })
         
-        // Nếu tempowner > 0 thì chạy tiếp, nếu không thì đếm số ô temp và trả kết quả.
+        // Nếu tempowner > 0 thì chạy tiếp.
         if (tempOwner > 0) {
             maskNewCell(player, newColor)
         }
@@ -129,7 +147,6 @@ export let useColorBoardManager = (boardSize: number, numColor: number, playerLi
             if(value.owner === player) {
                 let adjCell = getAdjacencyCell(i, j)
                 adjCell.forEach((cell) => {
-                    //console.log(cell.owner === "none")
                     if(cell.owner === "none") {
                         result = false
                     }
@@ -159,7 +176,7 @@ export let useColorBoardManager = (boardSize: number, numColor: number, playerLi
         for(let i = 0; i < numColor; i++) {
             if(i != gameBoard.value[0][0].color 
                 && i != gameBoard.value[boardSize - 1][boardSize - 1].color) {
-                    scoreDiffPerColor.push(scoreDiff("player2", i))
+                    scoreDiffPerColor.push(scoreDiff(playerList[1], i))
                 } else {
                     // Nếu trùng 2 màu trên thì trả kết quả là 0 điểm.
                     scoreDiffPerColor.push(0)
