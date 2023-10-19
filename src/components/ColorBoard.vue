@@ -5,6 +5,7 @@
             :rounded="false" :color="cellColors[i-1]"
         >
             <font-awesome-icon v-show="cellProp[i-1].init" icon="fa-solid fa-home" />
+            <font-awesome-icon v-show="!cellProp[i-1].active" icon="fa-solid fa-x" />
         </va-button>
     </div>
 </template>
