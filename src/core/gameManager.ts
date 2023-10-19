@@ -27,6 +27,8 @@ export let useGameManager = (params: ColorBoardManagerParams) => {
         let startPos = getStartPosition(boardSize, "corner", playerList)
         startPos.forEach((pos: number[], index: number) => {
             let startCell = colorBoard.gameBoard.value[pos[0]][pos[1]]
+            // active ô này, nếu ô bị disable:
+            startCell.active = true
             startCell.owner = playerList[index]
             startCell.init = true
             colorBoard.floodFill(playerList[index], startCell.color)
