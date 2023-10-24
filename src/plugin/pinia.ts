@@ -6,7 +6,10 @@ export let useGameStore = defineStore("gameStore", () => {
     let boardSize = ref(15)
     let numColor = ref(6)
     let playWithComputer = ref(true)
+    // Chướng ngại vật ngẫu nhiên
     let randomObstacle = ref(true)
+    // Điểm thưởng ngẫu nhiên
+    let bonusScore = ref(true)
     let numPlayer = ref(2)
 
     let playerList = computed(() => {
@@ -22,6 +25,7 @@ export let useGameStore = defineStore("gameStore", () => {
         numColor,
         playWithComputer,
         randomObstacle,
+        bonusScore,
         numPlayer,
         playerList,
     }

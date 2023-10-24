@@ -29,6 +29,7 @@ export let useGameManager = (params: ColorBoardManagerParams) => {
             let startCell = colorBoard.gameBoard.value[pos[0]][pos[1]]
             // active ô này, nếu ô bị disable:
             startCell.active = true
+            startCell.score = 1
             startCell.owner = playerList[index]
             startCell.init = true
             colorBoard.floodFill(playerList[index], startCell.color)

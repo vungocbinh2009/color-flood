@@ -26,6 +26,12 @@
             v-model="gameStore.randomObstacle"
             label="Random map obstacle"
         />
+        <br/>
+
+        <va-checkbox
+            v-model="gameStore.bonusScore"
+            label="Random map bonus score cell"
+        />
 
         <div>
             <va-button class="play-button" @click="startGame()">Play game</va-button>

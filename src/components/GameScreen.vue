@@ -35,7 +35,8 @@ let gameManager = useGameManager({
     boardSize: gameStore.boardSize,
     numColor: gameStore.numColor,
     playerList: gameStore.playerList,
-    randomObstacle: gameStore.randomObstacle
+    randomObstacle: gameStore.randomObstacle,
+    bonusScore: gameStore.bonusScore
 })
 
 let playerMove = (newColor: number) => {

@@ -33,12 +33,13 @@ export interface ColorBoardManagerParams {
     boardSize: number
     numColor: number
     playerList: string[]
-    randomObstacle: boolean
+    randomObstacle: boolean,
+    bonusScore: boolean
 }
 
 export let useColorBoardManager = (params: ColorBoardManagerParams) => {
     // follow thuộc tính này để cập nhật map.
-    let {boardSize, numColor, playerList, randomObstacle} = params
+    let {boardSize, numColor, playerList, randomObstacle, bonusScore} = params
     let gameBoard: Ref<CellState[][]> = ref(new Array<CellState[]>(boardSize))
 
     onBeforeMount(() => {
@@ -50,6 +51,7 @@ export let useColorBoardManager = (params: ColorBoardManagerParams) => {
         boardSize = boardSize
         numColor = numColor
         playerList = playerList
+        let bernoulliRandom = random.bernoulli(0.05)
         // Random màu và trạng thái active cho gameboard
         for (let i=0; i<boardSize; i++) {
             gameBoard.value[i] = new Array<CellState>(boardSize)
@@ -57,7 +59,14 @@ export let useColorBoardManager = (params: ColorBoardManagerParams) => {
                 gameBoard.value[i][j] = new CellState()
                 gameBoard.value[i][j].color = random.int(0, numColor - 1)
                 if(randomObstacle) {
-                    gameBoard.value[i][j].active = random.bernoulli(0.05)() < 0.05
+                    // Hầu hết giá trị nhỏ hơn 0.05
+                    gameBoard.value[i][j].active = bernoulliRandom() < 0.05
+                }
+                if(bonusScore) {
+                    let randomValueBool = bernoulliRandom() > 0.05
+                    if(randomValueBool) {
+                        gameBoard.value[i][j].score = 5
+                    }
                 }
             }
         }

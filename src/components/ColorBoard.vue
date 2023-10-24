@@ -4,8 +4,17 @@
             v-for="i in numberOfCells" size="small" 
             :rounded="false" :color="cellColors[i-1]"
         >
-            <font-awesome-icon v-show="cellProp[i-1].init" icon="fa-solid fa-home" />
-            <font-awesome-icon v-show="!cellProp[i-1].active" icon="fa-solid fa-x" />
+            <font-awesome-icon
+                v-show="cellProp[i-1].init" 
+                icon="fa-solid fa-home" />
+
+            <font-awesome-icon 
+                v-show="!cellProp[i-1].active" 
+                icon="fa-solid fa-x" />
+
+            <font-awesome-icon 
+                v-show="cellProp[i-1].active && cellProp[i-1].score === 5" 
+                icon="fa-solid fa-plus-circle" />
         </va-button>
     </div>
 </template>
