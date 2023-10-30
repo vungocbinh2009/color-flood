@@ -166,14 +166,20 @@ export let useColorBoardManager = (params: ColorBoardManagerParams) => {
         return result
     }
 
-    let scoreDiff = (player: string, newColor: number) => {
+    // Hàm này tính điểm một lựa chọn màu của máy. Máy sẽ chọn kết quả có điểm tốt nhất
+    // Lưu ý: Hàm tính toán dựa trên nhiều tiêu chí, 
+    // không thuần túy là xem lựa chọn nào nhiều điểm nhất
+    let getBotChoiceScore = (player: string, newColor: number) => {
         // Dánh dấu các ô mới khi đổi màu
         maskNewCell(player, newColor)
         // Đếm các ô mới được đánh dấu.
-        let score = calculateScore(`${player}-temp`)
+        let score = 0
+        let count = 0
         // Xóa bỏ các ô đánh dấu tạm.
         forEachBoardCell((i, j, cell) => {
             if(cell.owner === `${player}-temp`) {
+                score += (i + j)
+                count++
                 cell.owner = "none"
             }
         })
@@ -185,13 +191,13 @@ export let useColorBoardManager = (params: ColorBoardManagerParams) => {
         for(let i = 0; i < numColor; i++) {
             if(i != gameBoard.value[0][0].color 
                 && i != gameBoard.value[boardSize - 1][boardSize - 1].color) {
-                    scoreDiffPerColor.push(scoreDiff(playerList[1], i))
+                    scoreDiffPerColor.push(getBotChoiceScore(playerList[1], i))
                 } else {
                     // Nếu trùng 2 màu trên thì trả kết quả là 0 điểm.
                     scoreDiffPerColor.push(0)
                 }
         }
-        
+        console.log(scoreDiffPerColor)
         return scoreDiffPerColor.indexOf(Math.max(...scoreDiffPerColor))
     }
 

@@ -55,10 +55,10 @@ export let useGameManager = (params: ColorBoardManagerParams) => {
 
     let isGameFinishedFunc = () => {
         let result = true
-        playerList.forEach((value) => {
-            console.log(`Check is game finished: ${value}`)
+        playerList.forEach((player) => {
+            console.log(`Check is game finished: ${player}`)
             // Nếu vẫn còn thì giá trị bị gán false
-            result = colorBoard.isNoMoreMove(value)
+            result = colorBoard.isNoMoreMove(player)
             console.log(`Is game finished: ${result}`)
         })
         return result
@@ -83,6 +83,9 @@ export let useGameManager = (params: ColorBoardManagerParams) => {
                     }
                 })
             }
+            playerList.forEach((player, index) => {
+                playerScore.value[index] = colorBoard.calculateScore(player)
+            })
         } 
     })
 

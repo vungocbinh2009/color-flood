@@ -15,7 +15,7 @@
         <va-card square class="player-score" :color="colorMap[props.playerColor[1]]">
             <h1 class="text-score">{{props.playerScore[1]}}</h1>
         </va-card>
-    </div>    
+    </div>
 </template>
 
 <script setup lang="ts">
