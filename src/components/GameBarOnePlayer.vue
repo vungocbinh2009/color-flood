@@ -30,6 +30,8 @@ let gameStore = useGameStore()
 let props = defineProps<{
     playerColor: number[]
     playerScore: number[]
+    numPlayerCell: number[]
+    numPlayerBonusCell: number[]
     isGameFinished: boolean
 }>()
 

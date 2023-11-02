@@ -7,6 +7,8 @@
         :player-color="gameManager.playerColor.value"
         :player-score="gameManager.playerScore.value"
         :is-game-finished="gameManager.isGameFinished.value"
+        :num-player-cell="gameManager.numPlayerCell.value"
+        :num-player-bonus-cell="gameManager.numPlayerBonusCell.value"
         @player-move="playerMove"
         />
 
@@ -14,6 +16,8 @@
         :player-color="gameManager.playerColor.value"
         :player-score="gameManager.playerScore.value"
         :is-game-finished="gameManager.isGameFinished.value"
+        :num-player-cell="gameManager.numPlayerCell.value"
+        :num-player-bonus-cell="gameManager.numPlayerBonusCell.value"
         @player-move="playerMove"
         />
     </div>

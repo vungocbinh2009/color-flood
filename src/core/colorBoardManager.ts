@@ -150,6 +150,28 @@ export let useColorBoardManager = (params: ColorBoardManagerParams) => {
         return score
     }
 
+    // Đếm số ô người chơi đang có
+    let calculateNumCell = (player: string) => {
+        let count = 0
+        forEachBoardCell((i, j, value) => {
+            if(value.owner === player) {
+                count++
+            }
+        })
+        return count
+    }
+
+    // Đếm số ô điểm thưởng người chơi có.
+    let calculateNumBonusCell = (player: string) => {
+        let count = 0
+        forEachBoardCell((i, j, value) => {
+            if(value.owner === player && value.score === 5) {
+                count++
+            }
+        })
+        return count
+    }
+
     let isNoMoreMove = (player: string) => {
         let result = true
         forEachBoardCell((i, j, value) => {
@@ -201,6 +223,8 @@ export let useColorBoardManager = (params: ColorBoardManagerParams) => {
         return scoreDiffPerColor.indexOf(Math.max(...scoreDiffPerColor))
     }
 
+    
+
     return {
         playerList,
         boardSize,
@@ -210,6 +234,8 @@ export let useColorBoardManager = (params: ColorBoardManagerParams) => {
         floodFill,
         forEachBoardCell,
         calculateScore,
+        calculateNumCell,
+        calculateNumBonusCell,
         isNoMoreMove,
         bestPickNumber,
     }

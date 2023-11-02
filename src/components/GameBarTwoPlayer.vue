@@ -2,6 +2,7 @@
     <div class="parent">
         <va-card square class="player-score" :color="colorMap[props.playerColor[0]]">
             <h1 class="text-score">{{props.playerScore[0]}}</h1>
+            <va-chip>Cell: {{ props.numPlayerCell[0] }} | Bonus: {{ props.numPlayerBonusCell[0] }}</va-chip>
         </va-card>
         <va-card square color="#000000">
             <va-card-content class="center-toggle">
@@ -14,6 +15,7 @@
         </va-card>
         <va-card square class="player-score" :color="colorMap[props.playerColor[1]]">
             <h1 class="text-score">{{props.playerScore[1]}}</h1>
+            <va-chip>Cell: {{ props.numPlayerCell[1] }} | Bonus: {{ props.numPlayerBonusCell[1] }}</va-chip>
         </va-card>
     </div>
 </template>
@@ -29,6 +31,8 @@ let gameStore = useGameStore()
 let props = defineProps<{
     playerColor: number[]
     playerScore: number[]
+    numPlayerCell: number[]
+    numPlayerBonusCell: number[]
     isGameFinished: boolean
 }>()
 
@@ -79,7 +83,7 @@ let onColorButtonClicked = (color: number) => {
 }
 
 .text-score {
-    font-size: 50px;
+    font-size: 40px;
 }
 
 .center-toggle {
