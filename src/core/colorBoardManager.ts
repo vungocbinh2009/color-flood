@@ -60,9 +60,14 @@ export let useColorBoardManager = (params: ColorBoardManagerParams) => {
                 gameBoard.value[i][j].color = random.int(0, numColor - 1)
                 if(randomObstacle) {
                     // Hầu hết giá trị nhỏ hơn 0.05
-                    gameBoard.value[i][j].active = bernoulliRandom() < 0.05
+                    let randomValueBool = bernoulliRandom() > 0.05
+                    if(randomValueBool) {
+                        gameBoard.value[i][j].active = false
+                        gameBoard.value[i][j].score = 0
+                    }
                 }
                 if(bonusScore) {
+                    // Hầu hết giá trị nhỏ hơn 0.05
                     let randomValueBool = bernoulliRandom() > 0.05
                     if(randomValueBool) {
                         gameBoard.value[i][j].score = 5

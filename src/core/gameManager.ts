@@ -1,34 +1,17 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { ColorBoardManagerParams, useColorBoardManager } from "./colorBoardManager";
 import { getStartPosition } from "./startPosition";
+import { PLayerStat, useGameStat } from "./gameStat";
 
 export let useGameManager = (params: ColorBoardManagerParams) => {
     let {boardSize, numColor, playerList, randomObstacle} = params
     let colorBoard = useColorBoardManager(params)
+    let gameStat = useGameStat(playerList)
     let currentPlayerNum: number = 0
-    let playerScore = ref([0, 0])
-    let numPlayerCell = ref([0, 0])
-    let numPlayerBonusCell = ref([0, 0])
-
-    let playerColor = computed(() => {
-        let boardSize = colorBoard.boardSize
-        let startPos = getStartPosition(boardSize, "corner", playerList)
-        console.log(startPos)
-        return startPos.map((pos: number[]): number => {
-            return colorBoard.gameBoard.value[pos[0]][pos[1]].color
-        })
-    })
     let isGameFinished = ref(false)
+    let startPos = getStartPosition(boardSize, "corner", playerList)
 
     onMounted(() => {
-        playerScore.value = new Array<number>(playerList.length)
-        numPlayerCell.value = new Array<number>(playerList.length)
-        numPlayerBonusCell.value = new Array<number>(playerList.length)
-        for(let i=0; i < playerList.length; i++) {
-            playerScore.value[i] = 0
-            numPlayerCell.value[i] = 0
-            numPlayerBonusCell.value[i] = 0
-        }
         // Đánh dấu các ô xuất phát của người chơi.
         let startPos = getStartPosition(boardSize, "corner", playerList)
         startPos.forEach((pos: number[], index: number) => {
@@ -40,6 +23,13 @@ export let useGameManager = (params: ColorBoardManagerParams) => {
             startCell.init = true
             // Flood fill tính điểm cho người chơi trong lượt đầu
             colorBoard.floodFill(playerList[index], startCell.color)
+            let player = playerList[index]
+            gameStat.updatePlayerStat(player, {
+                score: colorBoard.calculateScore(player),
+                color: colorBoard.gameBoard.value[pos[0]][pos[1]].color,
+                numCell: colorBoard.calculateNumCell(player),
+                numBonusCell: colorBoard.calculateNumBonusCell(player)
+            })
         })
     })
 
@@ -54,15 +44,20 @@ export let useGameManager = (params: ColorBoardManagerParams) => {
     let playerMove = (newColor: number) => {
         let player = playerList[currentPlayerNum]
         colorBoard.floodFill(player, newColor)
+        let playerStartPos = startPos[currentPlayerNum]
         // Tính các thông số.
-        playerScore.value[currentPlayerNum] = colorBoard.calculateScore(player)
-        numPlayerCell.value[currentPlayerNum] = colorBoard.calculateNumCell(player)
-        numPlayerBonusCell.value[currentPlayerNum] = colorBoard.calculateNumBonusCell(player)
+        gameStat.updatePlayerStat(player, {
+            score: colorBoard.calculateScore(player),
+            color: colorBoard.gameBoard.value[playerStartPos[0]][playerStartPos[1]].color,
+            numCell: colorBoard.calculateNumCell(player),
+            numBonusCell: colorBoard.calculateNumBonusCell(player)
+        })
         nextPlayer()
-        console.log(`Current player: ${currentPlayerNum}`)
         isGameFinished.value = isGameFinishedFunc()
     }
 
+    // Hàm kiểm tra xem trò chơi đã kết thúc chưa.
+    // Lưu ý: Hàm chỉ đúng khi có ít nhất 2 người chơi.
     let isGameFinishedFunc = () => {
         let moveablePlayer = 0
         playerList.forEach((player) => {
@@ -72,31 +67,45 @@ export let useGameManager = (params: ColorBoardManagerParams) => {
                 moveablePlayer++
             }
         })
-        return moveablePlayer === 1
+        if(playerList.length === 1) {
+            // Trò chơi kết thúc khi người chơi duy nhất không di chuyển được
+            return moveablePlayer === 0
+        } else {
+            // Trò chơi kết thúc khi chỉ có 1 người di chuyển được.
+            return moveablePlayer === 1
+        }
     }
 
     watch(isGameFinished, (newValue, oldValue) => {
         // NewValue = true => gameFinished
         if(newValue) {
             playerList.forEach((player: string, index: number) => {
+                let playerStartPos = startPos[index]
+                let color = colorBoard.gameBoard.value[playerStartPos[0]][playerStartPos[1]].color
                 if(!colorBoard.isNoMoreMove(player)) {
                     colorBoard.forEachBoardCell((i, j, cell) => {
-                        if(cell.owner === "none") {
+                        if(cell.owner === "none" && cell.active) {
                             cell.owner = player
-                            cell.color = playerColor.value[index]
+                            cell.color = color
                         }
                     })
                 }
-                playerScore.value[index] = colorBoard.calculateScore(player)
-                numPlayerCell.value[index] = colorBoard.calculateNumCell(player)
-                numPlayerBonusCell.value[index] = colorBoard.calculateNumBonusCell(player)
+                gameStat.updatePlayerStat(player, {
+                    score: colorBoard.calculateScore(player),
+                    color: color,
+                    numCell: colorBoard.calculateNumCell(player),
+                    numBonusCell: colorBoard.calculateNumBonusCell(player)
+                })
             })
         } 
     })
 
     let getWinningPlayer = () => {
         if (isGameFinished.value) {
-            let maxScoreIndex = playerScore.value.indexOf(Math.max(...playerScore.value))
+            let allPlayerScore = gameStat.playerStatList.value.map((player: PLayerStat) => {
+                return player.score
+            })
+            let maxScoreIndex = allPlayerScore.indexOf(Math.max(...allPlayerScore))
             return playerList[maxScoreIndex]
         } else {
             return ""
@@ -107,10 +116,7 @@ export let useGameManager = (params: ColorBoardManagerParams) => {
         colorBoard,
         currentPlayerNum,
         playerList,
-        playerScore,
-        numPlayerCell,
-        numPlayerBonusCell,
-        playerColor,
+        gameStat,
         isGameFinished,
         // Hàm
         nextPlayer,

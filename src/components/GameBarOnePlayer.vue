@@ -1,8 +1,9 @@
 <template>
     <div class="parent">
-        <va-card square class="player-score" :color="colorMap[props.playerColor[0]]">
-            <h1 class="text-score">{{props.playerScore[0]}}</h1>
-        </va-card>
+        <PlayerCard 
+            :player-stat="props.playerStat[0]"
+            layout-left>
+        </PlayerCard>
         <va-card square color="#000000">
             <va-card-content class="center-toggle">
                 <va-button v-for="(color, i) in usedColorMap" 
@@ -12,7 +13,7 @@
                 </va-button>
             </va-card-content>
         </va-card>
-        <va-card square class="player-score" :color="colorMap[props.playerColor[0]]">
+        <va-card square class="player-score" :color="colorMap[props.playerStat[0].color]">
             <h1 class="text-stats">Moves: {{ playerTotalMove }}</h1>
             <h1 class="text-stats">Avg per move: {{ avgScorePerMove }}</h1>
         </va-card>
@@ -24,14 +25,13 @@ import { VaCard, VaCardContent, VaButton } from 'vuestic-ui';
 import { computed, ref } from 'vue';
 import { colorMap } from "src/core/colorBoardManager"
 import { useGameStore } from 'src/plugin/pinia';
+import { PLayerStat } from 'src/core/gameStat';
+import PlayerCard from "./PlayerCard.vue"
 
 let gameStore = useGameStore()
 
 let props = defineProps<{
-    playerColor: number[]
-    playerScore: number[]
-    numPlayerCell: number[]
-    numPlayerBonusCell: number[]
+    playerStat: Array<PLayerStat>
     isGameFinished: boolean
 }>()
 
@@ -42,7 +42,7 @@ let avgScorePerMove = computed(() => {
     if(playerTotalMove.value === 0) {
         value = 0
     } else {
-        value = props.playerScore[0] / playerTotalMove.value
+        value = props.playerStat[0].score / playerTotalMove.value
     }
     return value.toLocaleString("en-US", {
         maximumFractionDigits: 2,
@@ -61,7 +61,7 @@ let usedColorMap = computed(() => {
 // false là tắt button, true là bật button
 let buttonEnableState = computed(() => {
     let state = Array<boolean>(gameStore.numColor)
-    let playerColor = props.playerColor[0]
+    let playerColor = props.playerStat[0].color
     for (let i = 0; i < gameStore.numColor; i++) {
         if (props.isGameFinished) {
             console.log("Game finished")

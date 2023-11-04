@@ -4,20 +4,14 @@
         :color-board="gameManager.colorBoard.gameBoard.value"
         />
         <GameBarTwoPlayer class="game-bar" v-if="gameStore.numPlayer === 2"
-        :player-color="gameManager.playerColor.value"
-        :player-score="gameManager.playerScore.value"
+        :player-stat="gameManager.gameStat.playerStatList.value"
         :is-game-finished="gameManager.isGameFinished.value"
-        :num-player-cell="gameManager.numPlayerCell.value"
-        :num-player-bonus-cell="gameManager.numPlayerBonusCell.value"
         @player-move="playerMove"
         />
 
         <GameBarOnePlayer class="game-bar" v-if="gameStore.numPlayer === 1"
-        :player-color="gameManager.playerColor.value"
-        :player-score="gameManager.playerScore.value"
+        :player-stat="gameManager.gameStat.playerStatList.value"
         :is-game-finished="gameManager.isGameFinished.value"
-        :num-player-cell="gameManager.numPlayerCell.value"
-        :num-player-bonus-cell="gameManager.numPlayerBonusCell.value"
         @player-move="playerMove"
         />
     </div>

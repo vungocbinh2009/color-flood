@@ -1,9 +1,9 @@
 <template>
     <div class="parent">
-        <va-card square class="player-score" :color="colorMap[props.playerColor[0]]">
-            <h1 class="text-score">{{props.playerScore[0]}}</h1>
-            <va-chip>Cell: {{ props.numPlayerCell[0] }} | Bonus: {{ props.numPlayerBonusCell[0] }}</va-chip>
-        </va-card>
+        <PlayerCard 
+            :player-stat="props.playerStat[0]"
+            :layout-left="false">
+        </PlayerCard>
         <va-card square color="#000000">
             <va-card-content class="center-toggle">
                 <va-button v-for="(color, i) in usedColorMap" 
@@ -13,10 +13,10 @@
                 </va-button>
             </va-card-content>
         </va-card>
-        <va-card square class="player-score" :color="colorMap[props.playerColor[1]]">
-            <h1 class="text-score">{{props.playerScore[1]}}</h1>
-            <va-chip>Cell: {{ props.numPlayerCell[1] }} | Bonus: {{ props.numPlayerBonusCell[1] }}</va-chip>
-        </va-card>
+        <PlayerCard 
+            :player-stat="props.playerStat[1]"
+            :layout-left="true">
+        </PlayerCard>
     </div>
 </template>
 
@@ -25,14 +25,13 @@ import { VaCard, VaCardContent, VaButton } from 'vuestic-ui';
 import { computed } from 'vue';
 import { colorMap } from "src/core/colorBoardManager"
 import { useGameStore } from 'src/plugin/pinia';
+import PlayerCard from "./PlayerCard.vue"
+import { PLayerStat } from 'src/core/gameStat';
 
 let gameStore = useGameStore()
 
 let props = defineProps<{
-    playerColor: number[]
-    playerScore: number[]
-    numPlayerCell: number[]
-    numPlayerBonusCell: number[]
+    playerStat: Array<PLayerStat>
     isGameFinished: boolean
 }>()
 
@@ -47,7 +46,7 @@ let usedColorMap = computed(() => {
 // false là tắt button, true là bật button
 let buttonEnableState = computed(() => {
     let state = Array<boolean>(gameStore.numColor)
-    let playerColor = props.playerColor
+    let playerColor = props.playerStat.map(player => player.color)
     for (let i = 0; i < gameStore.numColor; i++) {
         if (props.isGameFinished) {
             console.log("Game finished")
@@ -74,16 +73,6 @@ let onColorButtonClicked = (color: number) => {
     grid-template-rows: 1fr;
     grid-column-gap: 0px;
     grid-row-gap: 0px;
-}
-
-.player-score {
-    color: white;
-    text-align: center;
-    justify-content: center;
-}
-
-.text-score {
-    font-size: 40px;
 }
 
 .center-toggle {
