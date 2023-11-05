@@ -199,13 +199,22 @@ export let useColorBoardManager = (params: ColorBoardManagerParams) => {
     let getBotChoiceScore = (player: string, newColor: number) => {
         // Dánh dấu các ô mới khi đổi màu
         maskNewCell(player, newColor)
+        let startCellPosition = [0, 0]
+        forEachBoardCell((i, j, cell) => {
+            if(cell.owner === player && cell.init) {
+                startCellPosition = [i, j]
+            }
+        })
         // Đếm các ô mới được đánh dấu.
         let score = 0
         let count = 0
         // Xóa bỏ các ô đánh dấu tạm.
         forEachBoardCell((i, j, cell) => {
             if(cell.owner === `${player}-temp`) {
-                score += (i + j)
+                score += (
+                    Math.abs(i - startCellPosition[0]) + 
+                    Math.abs(j - startCellPosition[1])
+                )
                 count++
                 cell.owner = "none"
             }
