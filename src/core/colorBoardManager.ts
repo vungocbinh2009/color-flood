@@ -206,20 +206,21 @@ export let useColorBoardManager = (params: ColorBoardManagerParams) => {
             }
         })
         // Đếm các ô mới được đánh dấu.
-        let score = 0
-        let count = 0
+        let maxWidth = 0
+        let maxHeight = 0
         // Xóa bỏ các ô đánh dấu tạm.
         forEachBoardCell((i, j, cell) => {
             if(cell.owner === `${player}-temp`) {
-                score += (
-                    Math.abs(i - startCellPosition[0]) + 
-                    Math.abs(j - startCellPosition[1])
-                )
-                count++
+                if (i > maxWidth) {
+                    maxWidth = i
+                }
+                if (j > maxHeight) {
+                    maxHeight = j
+                }
                 cell.owner = "none"
             }
         })
-        return score
+        return maxHeight * maxWidth
     }
 
     let bestPickNumber = () => {
