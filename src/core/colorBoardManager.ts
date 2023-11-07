@@ -206,21 +206,27 @@ export let useColorBoardManager = (params: ColorBoardManagerParams) => {
             }
         })
         // Đếm các ô mới được đánh dấu.
-        let maxWidth = 0
-        let maxHeight = 0
+        let score = 0
         // Xóa bỏ các ô đánh dấu tạm.
         forEachBoardCell((i, j, cell) => {
             if(cell.owner === `${player}-temp`) {
-                if (i > maxWidth) {
-                    maxWidth = i
-                }
-                if (j > maxHeight) {
-                    maxHeight = j
+                let adjCell = getAdjacencyCell(i, j)
+                let ownedAdjCell = adjCell.filter((cell) => {
+                    return cell.owner === player || cell.owner === `${player}-temp`
+                })
+                if(ownedAdjCell.length <= 2) {
+                    score += Math.sqrt(
+                        (i - startCellPosition[0])**2 +
+                        (j - startCellPosition[1])**2
+                    )
+                } else {
+                    // Thêm đoạn này để bot có thể end game.
+                    score += 0.1
                 }
                 cell.owner = "none"
             }
         })
-        return maxHeight * maxWidth
+        return score
     }
 
     let bestPickNumber = () => {
